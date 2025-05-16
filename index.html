@@ -174,9 +174,13 @@
         <div class="invalid-feedback">Asal tim wajib diisi.</div>
       </div>
       <div class="mb-3">
-        <label for="pesan" class="form-label">Pesan</label>
-        <textarea class="form-control" id="pesan" rows="3" placeholder="Tulis pesan Anda" required></textarea>
-        <div class="invalid-feedback">Pesan wajib diisi.</div>
+        <label for="jadwal" class="form-label">Jadwal Pertandingan yang Diajukan</label>
+        <input type="datetime-local" class="form-control" id="jadwal" required />
+        <div class="invalid-feedback">Jadwal wajib diisi.</div>
+      </div>
+      <div class="mb-3">
+        <label for="pesan" class="form-label">Pesan Tambahan</label>
+        <textarea class="form-control" id="pesan" rows="3" placeholder="Tulis pesan Anda (opsional)"></textarea>
       </div>
       <button type="submit" class="btn btn-success w-100">Kirim via WhatsApp</button>
     </form>
@@ -222,10 +226,23 @@
   
       const nama = document.getElementById('nama').value.trim();
       const alamat = document.getElementById('alamat').value.trim();
+      const jadwal = document.getElementById('jadwal').value.trim();
       const pesan = document.getElementById('pesan').value.trim();
   
+      const tanggalWaktu = new Date(jadwal);
+      const tanggalFormatted = tanggalWaktu.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      const waktuFormatted = tanggalWaktu.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+  
       const noWa = "085795744739";
-      const text = `*Pengajuan Pertandingan Kareo FC*%0A%0A*Nama Tim:* ${encodeURIComponent(nama)}%0A*Asal Tim:* ${encodeURIComponent(alamat)}%0A*Pesan:* ${encodeURIComponent(pesan)}`;
+      const text = `*Pengajuan Pertandingan Kareo FC*%0A%0A*Nama Tim:* ${encodeURIComponent(nama)}%0A*Asal Tim:* ${encodeURIComponent(alamat)}%0A*Jadwal yang Diajukan:* ${encodeURIComponent(tanggalFormatted)} pukul ${encodeURIComponent(waktuFormatted)} WIB%0A*Pesan:* ${encodeURIComponent(pesan || "-")}`;
   
       const url = `https://wa.me/62${noWa.substring(1)}?text=${text}`;
       window.open(url, "_blank");
