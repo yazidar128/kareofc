@@ -310,14 +310,6 @@
       <label for="pesan" class="form-label">Pesan Tambahan</label>
       <textarea class="form-control" id="pesan" rows="3" placeholder="Tulis pesan Anda (opsional)"></textarea>
     </div>
-
-    <!-- Tanda Tangan -->
-    <div class="mb-3">
-      <label class="form-label">Tanda Tangan Ketua Tim</label>
-      <canvas id="signaturePad" width="500" height="150" class="border rounded w-100" style="background-color: #fff;"></canvas>
-      <button type="button" class="btn btn-sm btn-danger mt-2" onclick="clearSignature()">Hapus Tanda Tangan</button>
-    </div>
-
     <button type="submit" class="btn btn-success w-100">Kirim via WhatsApp</button>
   </form>
 </section>
@@ -339,102 +331,64 @@
     </script>
 
     <script>
-  const canvas = document.getElementById("signaturePad");
-  const ctx = canvas.getContext("2d");
-  let isDrawing = false, lastX = 0, lastY = 0;
+  // Form validation Bootstrap 5 & kirim WA
+  const form = document.getElementById('contactForm');
 
-  // Mouse events
-  canvas.addEventListener("mousedown", (e) => {
-    isDrawing = true;
-    const rect = canvas.getBoundingClientRect();
-    lastX = e.clientX - rect.left;
-    lastY = e.clientY - rect.top;
-  });
-  canvas.addEventListener("mousemove", (e) => {
-    if (!isDrawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    lastX = x;
-    lastY = y;
-  });
-  canvas.addEventListener("mouseup", () => isDrawing = false);
-  canvas.addEventListener("mouseleave", () => isDrawing = false);
-
-  // Touch events
-  canvas.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    isDrawing = true;
-    const rect = canvas.getBoundingClientRect();
-    lastX = e.touches[0].clientX - rect.left;
-    lastY = e.touches[0].clientY - rect.top;
-  }, { passive: false });
-
-  canvas.addEventListener("touchmove", (e) => {
-    e.preventDefault();
-    if (!isDrawing) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.touches[0].clientX - rect.left;
-    const y = e.touches[0].clientY - rect.top;
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    lastX = x;
-    lastY = y;
-  }, { passive: false });
-
-  canvas.addEventListener("touchend", () => isDrawing = false);
-  canvas.addEventListener("touchcancel", () => isDrawing = false);
-
-  function clearSignature() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-</script>
-
-<script>
   function kirimWhatsapp(event) {
     event.preventDefault();
-    const form = document.getElementById('contactForm');
+
     if (!form.checkValidity()) {
       form.classList.add('was-validated');
       return;
     }
 
+    // Ambil data form
     const nama = document.getElementById('nama').value.trim();
     const alamat = document.getElementById('alamat').value.trim();
     const jadwal = document.getElementById('jadwal').value.trim();
     const pesan = document.getElementById('pesan').value.trim();
 
+    // Format tanggal & waktu
     const tanggalWaktu = new Date(jadwal);
+    if (isNaN(tanggalWaktu.getTime())) {
+      alert('Format jadwal tidak valid!');
+      return;
+    }
     const tanggalFormatted = tanggalWaktu.toLocaleDateString('id-ID', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
     const waktuFormatted = tanggalWaktu.toLocaleTimeString('id-ID', {
-      hour: '2-digit', minute: '2-digit'
+      hour: '2-digit',
+      minute: '2-digit',
     });
 
+    // Nomor WhatsApp tujuan (sesuaikan dengan format internasional)
     const noWa = "085795744739";
-    const signatureDataURL = canvas.toDataURL();
+    const noWaIntl = "62" + noWa.substring(1); // ganti 0 awal dengan 62
 
-    const text = `*Pengajuan Pertandingan Kareo FC*%0A%0A` +
-                 `*Nama Tim:* ${encodeURIComponent(nama)}%0A` +
-                 `*Asal Tim:* ${encodeURIComponent(alamat)}%0A` +
-                 `*Jadwal yang Diajukan:* ${encodeURIComponent(tanggalFormatted)} pukul ${encodeURIComponent(waktuFormatted)} WIB%0A` +
-                 `*Pesan:* ${encodeURIComponent(pesan || "-")} %0A%0A` +
-                 `Tanda tangan digital terkirim.`
+    // Buat pesan WA, encodeURIComponent untuk URL aman
+    const text =
+      `*Pengajuan Pertandingan Kareo FC*%0A%0A` +
+      `*Nama Tim:* ${encodeURIComponent(nama)}%0A` +
+      `*Asal Tim:* ${encodeURIComponent(alamat)}%0A` +
+      `*Jadwal yang Diajukan:* ${encodeURIComponent(tanggalFormatted)} pukul ${encodeURIComponent(waktuFormatted)} WIB%0A` +
+      `*Pesan:* ${encodeURIComponent(pesan || "-")}`;
 
-    // Kirim ke WhatsApp (tanpa gambar karena WA URL tidak bisa kirim gambar)
-    const url = `https://wa.me/62${noWa.substring(1)}?text=${text}`;
+    const url = `https://wa.me/${noWaIntl}?text=${text}`;
+
+    // Buka tab baru ke WhatsApp
     window.open(url, "_blank");
 
+    // Reset form dan validasi
     form.reset();
-    clearSignature();
+    form.classList.remove('was-validated');
   }
+
+  // Tambahkan event listener submit untuk validasi Bootstrap
+  form.addEventListener('submit', kirimWhatsapp);
 </script>
 
 
