@@ -373,38 +373,62 @@
   const canvas = document.getElementById("signaturePad");
   const ctx = canvas.getContext("2d");
   let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
 
+  // Support mouse
   canvas.addEventListener("mousedown", (e) => {
     isDrawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
+    const rect = canvas.getBoundingClientRect();
+    lastX = e.clientX - rect.left;
+    lastY = e.clientY - rect.top;
   });
 
   canvas.addEventListener("mousemove", (e) => {
-    if (isDrawing) {
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.stroke();
-    }
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastX = x;
+    lastY = y;
   });
 
-  canvas.addEventListener("mouseup", () => {
-    isDrawing = false;
+  canvas.addEventListener("mouseup", () => isDrawing = false);
+  canvas.addEventListener("mouseleave", () => isDrawing = false);
+
+  // Support touch
+  canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    lastX = e.touches[0].clientX - rect.left;
+    lastY = e.touches[0].clientY - rect.top;
   });
 
-  canvas.addEventListener("mouseleave", () => {
-    isDrawing = false;
+  canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left;
+    const y = e.touches[0].clientY - rect.top;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastX = x;
+    lastY = y;
   });
 
+  canvas.addEventListener("touchend", () => isDrawing = false);
+  canvas.addEventListener("touchcancel", () => isDrawing = false);
+
+  // Tombol untuk menghapus tanda tangan
   function clearSignature() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
-  function kirimWhatsapp(event) {
-  event.preventDefault();
-  const form = document.getElementById('contactForm');
-  if (!form.checkValidity()) {
-    form.classList.add('was-validated');
-    return;
   }
 
   const nama = document.getElementById('nama').value.trim();
