@@ -288,33 +288,57 @@
       </div>
     </section>
 
-    <section id="kontak">
-  <h2>Pengajuan Pertandingan</h2>
-  <form class="mx-auto" style="max-width: 500px;" id="contactForm" onsubmit="kirimWhatsapp(event)" novalidate>
-    <div class="mb-3">
-      <label for="nama" class="form-label">Nama Tim</label>
-      <input type="text" class="form-control" id="nama" placeholder="Masukkan nama tim" required />
-      <div class="invalid-feedback">Nama tim wajib diisi.</div>
-    </div>
-    <div class="mb-3">
-      <label for="alamat" class="form-label">Asal Tim</label>
-      <input type="text" class="form-control" id="alamat" placeholder="Masukkan asal tim" required />
-      <div class="invalid-feedback">Asal tim wajib diisi.</div>
-    </div>
-    <div class="mb-3">
-      <label for="jadwal" class="form-label">Jadwal Pertandingan yang Diajukan</label>
-      <input type="datetime-local" class="form-control" id="jadwal" required />
-      <div class="invalid-feedback">Jadwal wajib diisi.</div>
-    </div>
-    <div class="mb-3">
-      <label for="pesan" class="form-label">Pesan Tambahan</label>
-      <textarea class="form-control" id="pesan" rows="3" placeholder="Tulis pesan Anda (opsional)"></textarea>
-    </div>
-    <button type="submit" class="btn btn-success w-100">Kirim via WhatsApp</button>
-  </form>
-</section>
-
-
+    <section class="container py-5">
+      <h2>Pengajuan Pertandingan</h2>
+      <form id="contactForm" novalidate>
+        <div class="mb-3">
+          <label for="nama" class="form-label">Nama Tim</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nama"
+            placeholder="Masukkan nama tim"
+            required
+          />
+          <div class="invalid-feedback">Nama tim wajib diisi.</div>
+        </div>
+        <div class="mb-3">
+          <label for="alamat" class="form-label">Asal Tim</label>
+          <input
+            type="text"
+            class="form-control"
+            id="alamat"
+            placeholder="Masukkan asal tim"
+            required
+          />
+          <div class="invalid-feedback">Asal tim wajib diisi.</div>
+        </div>
+        <div class="mb-3">
+          <label for="jadwal" class="form-label"
+            >Jadwal Pertandingan yang Diajukan</label
+          >
+          <input
+            type="datetime-local"
+            class="form-control"
+            id="jadwal"
+            required
+          />
+          <div class="invalid-feedback">Jadwal wajib diisi.</div>
+        </div>
+        <div class="mb-3">
+          <label for="pesan" class="form-label">Pesan Tambahan</label>
+          <textarea
+            class="form-control"
+            id="pesan"
+            rows="3"
+            placeholder="Tulis pesan Anda (opsional)"
+          ></textarea>
+        </div>
+        <button type="submit" class="btn btn-success w-100">
+          Kirim via WhatsApp
+        </button>
+      </form>
+    </section>
     <footer>
       <p>&copy; 2025 Kareo FC - Semua hak cipta dilindungi</p>
       <p>
@@ -331,66 +355,61 @@
     </script>
 
     <script>
-  // Form validation Bootstrap 5 & kirim WA
-  const form = document.getElementById('contactForm');
+      const form = document.getElementById("contactForm");
 
-  function kirimWhatsapp(event) {
-    event.preventDefault();
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    if (!form.checkValidity()) {
-      form.classList.add('was-validated');
-      return;
-    }
+        if (!form.checkValidity()) {
+          form.classList.add("was-validated");
+          return;
+        }
 
-    // Ambil data form
-    const nama = document.getElementById('nama').value.trim();
-    const alamat = document.getElementById('alamat').value.trim();
-    const jadwal = document.getElementById('jadwal').value.trim();
-    const pesan = document.getElementById('pesan').value.trim();
+        // Ambil data form
+        const nama = document.getElementById("nama").value.trim();
+        const alamat = document.getElementById("alamat").value.trim();
+        const jadwal = document.getElementById("jadwal").value.trim();
+        const pesan = document.getElementById("pesan").value.trim();
 
-    // Format tanggal & waktu
-    const tanggalWaktu = new Date(jadwal);
-    if (isNaN(tanggalWaktu.getTime())) {
-      alert('Format jadwal tidak valid!');
-      return;
-    }
-    const tanggalFormatted = tanggalWaktu.toLocaleDateString('id-ID', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-    const waktuFormatted = tanggalWaktu.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+        // Format tanggal & waktu
+        const tanggalWaktu = new Date(jadwal);
+        if (isNaN(tanggalWaktu)) {
+          alert("Format jadwal tidak valid!");
+          return;
+        }
+        const tanggalFormatted = tanggalWaktu.toLocaleDateString("id-ID", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        const waktuFormatted = tanggalWaktu.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
 
-    // Nomor WhatsApp tujuan (sesuaikan dengan format internasional)
-    const noWa = "085795744739";
-    const noWaIntl = "62" + noWa.substring(1); // ganti 0 awal dengan 62
+        // Nomor WhatsApp tujuan dengan format internasional tanpa "+"
+        const noWaIntl = "6285795744739";
 
-    // Buat pesan WA, encodeURIComponent untuk URL aman
-    const text =
-      `*Pengajuan Pertandingan Kareo FC*%0A%0A` +
-      `*Nama Tim:* ${encodeURIComponent(nama)}%0A` +
-      `*Asal Tim:* ${encodeURIComponent(alamat)}%0A` +
-      `*Jadwal yang Diajukan:* ${encodeURIComponent(tanggalFormatted)} pukul ${encodeURIComponent(waktuFormatted)} WIB%0A` +
-      `*Pesan:* ${encodeURIComponent(pesan || "-")}`;
+        // Buat pesan WA dengan encodeURIComponent
+        const text =
+          `*Pengajuan Pertandingan Kareo FC*\n\n` +
+          `*Nama Tim:* ${nama}\n` +
+          `*Asal Tim:* ${alamat}\n` +
+          `*Jadwal yang Diajukan:* ${tanggalFormatted} pukul ${waktuFormatted} WIB\n` +
+          `*Pesan:* ${pesan || "-"}`;
 
-    const url = `https://wa.me/${noWaIntl}?text=${text}`;
+        const url = `https://wa.me/${noWaIntl}?text=${encodeURIComponent(
+          text
+        )}`;
 
-    // Buka tab baru ke WhatsApp
-    window.open(url, "_blank");
+        // Buka WhatsApp di tab baru
+        window.open(url, "_blank");
 
-    // Reset form dan validasi
-    form.reset();
-    form.classList.remove('was-validated');
-  }
-
-  // Tambahkan event listener submit untuk validasi Bootstrap
-  form.addEventListener('submit', kirimWhatsapp);
-</script>
-
-
+        // Reset form dan validasi
+        form.reset();
+        form.classList.remove("was-validated");
+      });
+    </script>
   </body>
 </html>
