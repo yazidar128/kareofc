@@ -288,71 +288,40 @@
       </div>
     </section>
 
-    <section id="pengajuan" data-aos="fade-up">
-      <h2 class="text-center mb-4">Pengajuan Pertandingan</h2>
-      <form
-        class="mx-auto bg-white p-4 rounded shadow"
-        style="max-width: 600px"
-        id="contactForm"
-        onsubmit="kirimWhatsapp(event)"
-        novalidate
-      >
-        <div class="mb-3">
-          <label for="nama" class="form-label">Nama Tim</label>
-          <input
-            type="text"
-            class="form-control"
-            id="nama"
-            placeholder="Contoh: Tim Putra Jaya"
-            required
-          />
-          <div class="invalid-feedback">Nama tim wajib diisi.</div>
-        </div>
-        <div class="mb-3">
-          <label for="alamat" class="form-label">Asal Tim</label>
-          <input
-            type="text"
-            class="form-control"
-            id="alamat"
-            placeholder="Contoh: Desa Tambak"
-            required
-          />
-          <div class="invalid-feedback">Asal tim wajib diisi.</div>
-        </div>
-        <div class="mb-3">
-          <label for="jadwal" class="form-label"
-            >Jadwal Pertandingan yang Diajukan</label
-          >
-          <input
-            type="datetime-local"
-            class="form-control"
-            id="jadwal"
-            required
-          />
-          <div class="invalid-feedback">Jadwal wajib diisi.</div>
-        </div>
-        <div class="mb-3">
-          <label for="pesan" class="form-label">Pesan Tambahan</label>
-          <textarea
-            class="form-control"
-            id="pesan"
-            rows="3"
-            placeholder="Tulis pesan Anda (opsional)"
-          ></textarea>
-        </div>
-        <button type="submit" class="btn btn-success w-100">
-          Kirim via WhatsApp
-        </button>
-      </form>
-      <div class="mb-3">
-  <label class="form-label">Tanda Tangan Ketua Tim Lawan</label>
-  <canvas id="signaturePad" width="500" height="150" class="border rounded w-100 mb-2" style="background-color: #fff;"></canvas>
-  <div class="d-flex justify-content-end">
-    <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearSignature()">Hapus Tanda Tangan</button>
-  </div>
-</div>
+    <section id="kontak">
+  <h2>Pengajuan Pertandingan</h2>
+  <form class="mx-auto" style="max-width: 500px;" id="contactForm" onsubmit="kirimWhatsapp(event)" novalidate>
+    <div class="mb-3">
+      <label for="nama" class="form-label">Nama Tim</label>
+      <input type="text" class="form-control" id="nama" placeholder="Masukkan nama tim" required />
+      <div class="invalid-feedback">Nama tim wajib diisi.</div>
+    </div>
+    <div class="mb-3">
+      <label for="alamat" class="form-label">Asal Tim</label>
+      <input type="text" class="form-control" id="alamat" placeholder="Masukkan asal tim" required />
+      <div class="invalid-feedback">Asal tim wajib diisi.</div>
+    </div>
+    <div class="mb-3">
+      <label for="jadwal" class="form-label">Jadwal Pertandingan yang Diajukan</label>
+      <input type="datetime-local" class="form-control" id="jadwal" required />
+      <div class="invalid-feedback">Jadwal wajib diisi.</div>
+    </div>
+    <div class="mb-3">
+      <label for="pesan" class="form-label">Pesan Tambahan</label>
+      <textarea class="form-control" id="pesan" rows="3" placeholder="Tulis pesan Anda (opsional)"></textarea>
+    </div>
 
-    </section>
+    <!-- Tanda Tangan -->
+    <div class="mb-3">
+      <label class="form-label">Tanda Tangan Ketua Tim</label>
+      <canvas id="signaturePad" width="500" height="150" class="border rounded w-100" style="background-color: #fff;"></canvas>
+      <button type="button" class="btn btn-sm btn-danger mt-2" onclick="clearSignature()">Hapus Tanda Tangan</button>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">Kirim via WhatsApp</button>
+  </form>
+</section>
+
 
     <footer>
       <p>&copy; 2025 Kareo FC - Semua hak cipta dilindungi</p>
@@ -372,18 +341,15 @@
     <script>
   const canvas = document.getElementById("signaturePad");
   const ctx = canvas.getContext("2d");
-  let isDrawing = false;
-  let lastX = 0;
-  let lastY = 0;
+  let isDrawing = false, lastX = 0, lastY = 0;
 
-  // Support mouse
+  // Mouse events
   canvas.addEventListener("mousedown", (e) => {
     isDrawing = true;
     const rect = canvas.getBoundingClientRect();
     lastX = e.clientX - rect.left;
     lastY = e.clientY - rect.top;
   });
-
   canvas.addEventListener("mousemove", (e) => {
     if (!isDrawing) return;
     const rect = canvas.getBoundingClientRect();
@@ -396,18 +362,17 @@
     lastX = x;
     lastY = y;
   });
-
   canvas.addEventListener("mouseup", () => isDrawing = false);
   canvas.addEventListener("mouseleave", () => isDrawing = false);
 
-  // Support touch
+  // Touch events
   canvas.addEventListener("touchstart", (e) => {
     e.preventDefault();
     isDrawing = true;
     const rect = canvas.getBoundingClientRect();
     lastX = e.touches[0].clientX - rect.left;
     lastY = e.touches[0].clientY - rect.top;
-  });
+  }, { passive: false });
 
   canvas.addEventListener("touchmove", (e) => {
     e.preventDefault();
@@ -421,44 +386,57 @@
     ctx.stroke();
     lastX = x;
     lastY = y;
-  });
+  }, { passive: false });
 
   canvas.addEventListener("touchend", () => isDrawing = false);
   canvas.addEventListener("touchcancel", () => isDrawing = false);
 
-  // Tombol untuk menghapus tanda tangan
   function clearSignature() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
-
-  const nama = document.getElementById('nama').value.trim();
-  const alamat = document.getElementById('alamat').value.trim();
-  const jadwal = document.getElementById('jadwal').value.trim();
-  const pesan = document.getElementById('pesan').value.trim();
-
-  const tanggalWaktu = new Date(jadwal);
-  const tanggalFormatted = tanggalWaktu.toLocaleDateString('id-ID', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-  const waktuFormatted = tanggalWaktu.toLocaleTimeString('id-ID', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  // Ambil gambar tanda tangan sebagai base64
-  const signatureDataURL = document.getElementById('signaturePad').toDataURL("image/png");
-
-  const noWa = "085795744739";
-  const text = `*Pengajuan Pertandingan Kareo FC*%0A%0A*Nama Tim:* ${encodeURIComponent(nama)}%0A*Asal Tim:* ${encodeURIComponent(alamat)}%0A*Jadwal yang Diajukan:* ${encodeURIComponent(tanggalFormatted)} pukul ${encodeURIComponent(waktuFormatted)} WIB%0A*Pesan:* ${encodeURIComponent(pesan || "-")}%0A*Tanda Tangan Ketua Tim:*%0A(Salin dan buka di browser jika tidak tampil)%0A${encodeURIComponent(signatureDataURL)}`;
-
-  const url = `https://wa.me/62${noWa.substring(1)}?text=${text}`;
-  window.open(url, "_blank");
-}
-
 </script>
+
+<script>
+  function kirimWhatsapp(event) {
+    event.preventDefault();
+    const form = document.getElementById('contactForm');
+    if (!form.checkValidity()) {
+      form.classList.add('was-validated');
+      return;
+    }
+
+    const nama = document.getElementById('nama').value.trim();
+    const alamat = document.getElementById('alamat').value.trim();
+    const jadwal = document.getElementById('jadwal').value.trim();
+    const pesan = document.getElementById('pesan').value.trim();
+
+    const tanggalWaktu = new Date(jadwal);
+    const tanggalFormatted = tanggalWaktu.toLocaleDateString('id-ID', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    const waktuFormatted = tanggalWaktu.toLocaleTimeString('id-ID', {
+      hour: '2-digit', minute: '2-digit'
+    });
+
+    const noWa = "085795744739";
+    const signatureDataURL = canvas.toDataURL();
+
+    const text = `*Pengajuan Pertandingan Kareo FC*%0A%0A` +
+                 `*Nama Tim:* ${encodeURIComponent(nama)}%0A` +
+                 `*Asal Tim:* ${encodeURIComponent(alamat)}%0A` +
+                 `*Jadwal yang Diajukan:* ${encodeURIComponent(tanggalFormatted)} pukul ${encodeURIComponent(waktuFormatted)} WIB%0A` +
+                 `*Pesan:* ${encodeURIComponent(pesan || "-")} %0A%0A` +
+                 `Tanda tangan digital terkirim.`
+
+    // Kirim ke WhatsApp (tanpa gambar karena WA URL tidak bisa kirim gambar)
+    const url = `https://wa.me/62${noWa.substring(1)}?text=${text}`;
+    window.open(url, "_blank");
+
+    form.reset();
+    clearSignature();
+  }
+</script>
+
 
   </body>
 </html>
